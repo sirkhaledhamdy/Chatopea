@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "841408435990",
+    "project_id": "chatopea-230dd",
+    "storage_bucket": "chatopea-230dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841408435990:android:b07128fa828e526e546237",
+        "android_client_info": {
+          "package_name": "com.example.chatopeas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "841408435990-q47k5k2q5q0hmock4fp981qb41a24ba6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatopeas",
+            "certificate_hash": "ccde59b04e870b955a79b614e299f22dc3ed3f81"
+          }
+        },
+        {
+          "client_id": "841408435990-1930prhf2m0ug5tv6tta0htposuhr61t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ3LtIS87jRffyrq0Cyxb9QbtpNDf_0DM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "841408435990-1930prhf2m0ug5tv6tta0htposuhr61t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "841408435990-2gijna6i6f32dtnks952kdgfo2a0a0f7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatopeas"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
