@@ -18,7 +18,9 @@ class SocialOnBoardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: secDefaultColor,
+      ),
       body: Scaffold(
         appBar: AppBar(
           backgroundColor: secDefaultColor,

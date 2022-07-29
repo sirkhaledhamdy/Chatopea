@@ -58,12 +58,12 @@ class FollowersScreen extends StatelessWidget {
             body: TabBarView(
               children:  [
                 ListView.builder(
-                  itemBuilder: (context , index) => buildFollowItem(SocialCubit.get(context).userModel!.followers[index]  , context, index),
-                  itemCount: SocialCubit.get(context).userModel!.followers.length,
+                  itemBuilder: (context , index) => buildFollowItem(SocialCubit.get(context).userModel!.followers![index]  , context, index),
+                  itemCount: SocialCubit.get(context).userModel!.followers!.length,
                 ),
                 ListView.builder(
-                  itemBuilder: (context , index) => buildFollowItem(SocialCubit.get(context).userModel!.following[index]  , context, index),
-                  itemCount: SocialCubit.get(context).userModel!.following.length,
+                  itemBuilder: (context , index) => buildFollowItem(SocialCubit.get(context).userModel!.following![index]  , context, index),
+                  itemCount: SocialCubit.get(context).userModel!.following!.length,
                 ),
               ],
             ),
@@ -77,7 +77,7 @@ class FollowersScreen extends StatelessWidget {
 
 Widget buildFollowItem(SocialFollowModel? followModel  , context  ,index) => GestureDetector(
   onTap: (){
-      navigateTo(context, OtherProfileScreen(uId: followModel!.uId,));
+      navigateTo(context, OtherProfileScreen(uId: followModel!.uId!,));
   },
   child: Padding(
     padding: const EdgeInsets.all(16.0),

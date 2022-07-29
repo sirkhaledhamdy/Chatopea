@@ -4,11 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
-
-
+import 'package:flutter/services.dart';
+import '../constants/components/components.dart';
 import '../cubits/cubit/cubit.dart';
 import '../cubits/cubit/states.dart';
 import '../models/register_model.dart';
+import '../modules/social_app/other_profile/other_profile_screen.dart';
 
 class SocialHomeLayout extends StatefulWidget {
 
@@ -25,27 +26,27 @@ class _SocialHomeLayoutState extends State<SocialHomeLayout> {
 
   List<SocialUserModel> searchResult = [];
 
-  // fetchData()async{
-  //   await SocialCubit.get(context).getUserData().then((_)async{
-  //     await SocialCubit.get(context).getPosts().then((_)async{
-  //       await SocialCubit.get(context).getUsers();
-  //   });
-  //   });
-  //
-  //
-  // }
-  //
-  //
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   // SocialCubit.get(context).getUserData();
-  //   //     // .then((value){
-  //   //   SocialCubit.get(context).getPosts();
-  //   // });
-  //   fetchData();
-  //   super.initState();
-  // }
+  fetchData()async{
+    await SocialCubit.get(context).getUserData().then((_)async{
+      await SocialCubit.get(context).getPosts().then((_)async{
+        await SocialCubit.get(context).getUsers();
+    });
+    });
+
+
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // SocialCubit.get(context).getUserData();
+    //     // .then((value){
+    //   SocialCubit.get(context).getPosts();
+    // });
+    fetchData();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SocialCubit, SocialStates>(
@@ -54,6 +55,9 @@ class _SocialHomeLayoutState extends State<SocialHomeLayout> {
           var cubit = SocialCubit.get(context);
           return Scaffold(
             appBar: AppBar(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.white,
+              ),
               actions: [
                 AnimatedContainer(duration: Duration(milliseconds: 500),
                   width: width,
@@ -118,14 +122,19 @@ class _SocialHomeLayoutState extends State<SocialHomeLayout> {
             body:
 
             searchResult.length != 0 ? ListView.builder(itemBuilder: (_,index)=> Container(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 65),
-                child: Row(
-                  children: [
-                    Icon(CupertinoIcons.person_crop_circle_fill,size: 20,color: defaultColor,),
-                    SizedBox(width: 10,),
-                    Text(searchResult[index].name ?? "")
-                  ],
+              child: GestureDetector(
+                onTap: (){
+                  navigateTo(context, OtherProfileScreen(uId: searchResult[index].uId!,));
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 65),
+                  child: Row(
+                    children: [
+                      Icon(CupertinoIcons.person_crop_circle_fill,size: 20,color: defaultColor,),
+                      SizedBox(width: 10,),
+                      Text(searchResult[index].name ?? "")
+                    ],
+                  ),
                 ),
               ),
             ),itemCount:searchResult.length ):

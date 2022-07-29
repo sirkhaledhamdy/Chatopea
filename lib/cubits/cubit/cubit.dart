@@ -19,7 +19,6 @@ import '../../modules/social_app/profile/profile_screen.dart';
 import '../../network/local/cache_helper.dart';
 import 'states.dart';
 
-
 class SocialCubit extends Cubit<SocialStates> {
   SocialCubit() : super(SocialInitialState());
 
@@ -28,7 +27,7 @@ class SocialCubit extends Cubit<SocialStates> {
   SocialUserModel? userModel;
   SocialUserModel? otherUserModel;
   SocialPostModel? postModel;
-  SocialCommentModel? commentModel;
+  // SocialCommentModel? commentModel;
 
   getUserData() async {
     uId = CacheHelper.getData(key: 'uId');
@@ -136,8 +135,10 @@ class SocialCubit extends Cubit<SocialStates> {
     String? bio,
     String? title,
     String? image,
-  })  {
+  }) {
     emit(SocialUSerUpdateLoadingState());
+    print(userModel!.followers);
+    print(userModel!.following);
     SocialUserModel? model = SocialUserModel(
       name: name ?? userModel!.name,
       title: title ?? userModel!.title,
@@ -157,6 +158,7 @@ class SocialCubit extends Cubit<SocialStates> {
         .then((value) {
       getUserData();
     }).catchError((error) {
+      print(error.toString());
       emit(SocialUSerUpdateErrorState());
     });
   }
@@ -239,6 +241,7 @@ class SocialCubit extends Cubit<SocialStates> {
     posts = [];
     postId = [];
     myPosts = [];
+    userPosts = [];
     FirebaseFirestore.instance
         .collection('posts')
         .orderBy('dateTime', descending: true)
@@ -249,8 +252,11 @@ class SocialCubit extends Cubit<SocialStates> {
           postId.add(element.id);
           posts.add(SocialPostModel.fromJson(element.data()));
         }
-        if(myPosts.isEmpty){
+        if (myPosts.isEmpty) {
           myPosts = posts.where((element) => element.uId == uId).toList();
+        }
+        if (userPosts.isEmpty) {
+          userPosts = posts.where((element) => element.uId != uId).toList();
         }
         emit(SocialGetPostSuccessState());
       }
@@ -258,13 +264,17 @@ class SocialCubit extends Cubit<SocialStates> {
   }
 
   List<SocialPostModel> myPosts = [];
-
+  List<SocialPostModel> userPosts = [];
+  List<SocialPostModel> loadedPosts = [];
 
   void likePost(String postId, SocialPostModel postModel, int index) async {
     SocialLikeModel? likeModel = SocialLikeModel(
       isLike: true,
       userId: uId,
     );
+
+    loadedPosts = posts;
+    posts = [];
 
     if (postModel.likes!
         .where((element) => element == likeModel.userId)
@@ -276,6 +286,7 @@ class SocialCubit extends Cubit<SocialStates> {
         emit(SocialLikePostSuccessState());
       }).catchError((error) {
         print(error.toString());
+        posts = loadedPosts;
         emit(SocialLikePostErrorState(error.toString()));
       });
     } else {
@@ -301,30 +312,35 @@ class SocialCubit extends Cubit<SocialStates> {
       name: userModel!.name,
     );
 
+    loadedPosts = posts;
+    posts = [];
+
     if (postModel.comments!
         .where((element) => element == commentModel)
         .isEmpty) {
       await FirebaseFirestore.instance.collection('posts').doc(postId).update({
         'comments': FieldValue.arrayUnion([commentModel.toMap()]),
       }).then((value) {
-        posts[index].comments!.add(commentModel);
+        // posts[index].comments!.add(commentModel);
         print(commentModel.imageUser);
         emit(SocialPostCommentSuccessState());
       }).catchError((error) {
+        posts = loadedPosts;
         print(error.toString());
         emit(SocialPostCommentErrorState(error.toString()));
       });
-    } else {
-      await FirebaseFirestore.instance.collection('posts').doc(postId).update({
-        'comments': FieldValue.arrayRemove([commentModel]),
-      }).then((value) {
-        posts[index].comments!.add(commentModel);
-        emit(SocialPostDisLikeSuccessState());
-      }).catchError((error) {
-        print(error.toString());
-        emit(SocialPostDisLikeErrorState(error.toString()));
-      });
     }
+    // else {
+    //   await FirebaseFirestore.instance.collection('posts').doc(postId).update({
+    //     'comments': FieldValue.arrayRemove([commentModel]),
+    //   }).then((value) {
+    //     posts[index].comments!.remove(commentModel);
+    //     emit(SocialPostDisLikeSuccessState());
+    //   }).catchError((error) {
+    //     print(error.toString());
+    //     emit(SocialPostDisLikeErrorState(error.toString()));
+    //   });
+    // }
   }
 
   List<SocialUserModel> allUsers = [];
@@ -340,6 +356,7 @@ class SocialCubit extends Cubit<SocialStates> {
           emit(SocialGetAllUsersSuccessState());
         }
       }).catchError((error) {
+        print(error.toString());
         emit(SocialGetAllUsersErrorState(error.toString()));
       });
     }
@@ -386,7 +403,7 @@ class SocialCubit extends Cubit<SocialStates> {
   bool? loadingMessages;
   List<SocialMessageModel> messages = [];
   getMessages({required String? receiverId}) async {
-    loadingMessages  = true;
+    loadingMessages = true;
     FirebaseFirestore.instance
         .collection('users')
         .doc(userModel!.uId)
@@ -408,8 +425,6 @@ class SocialCubit extends Cubit<SocialStates> {
     });
   }
 
-
-
   void followAndUnfollow(
       // { required SocialUserModel myModel , required SocialUserModel userModel  }
       ) async {
@@ -423,7 +438,7 @@ class SocialCubit extends Cubit<SocialStates> {
       image: userModel!.image,
       name: userModel!.name,
     );
-    if (otherUserModel!.followers
+    if (otherUserModel!.followers!
         .where((element) => element.uId == userModel!.uId)
         .isEmpty) {
       //my Following add.
@@ -433,7 +448,7 @@ class SocialCubit extends Cubit<SocialStates> {
           .update({
         'following': FieldValue.arrayUnion([followerModel.toMap()]),
       }).then((value) {
-        userModel!.following.add(followerModel);
+        userModel!.following!.add(followerModel);
       }).catchError((error) {
         print(error.toString());
         emit(SocialFollowErrorState(error.toString()));
@@ -445,7 +460,7 @@ class SocialCubit extends Cubit<SocialStates> {
           .update({
         'followers': FieldValue.arrayUnion([myFollowModel.toMap()]),
       }).then((value) {
-        otherUserModel!.followers.add(myFollowModel);
+        otherUserModel!.followers!.add(myFollowModel);
         emit(SocialFollowSuccessState());
       }).catchError((error) {
         print(error.toString());
@@ -459,7 +474,8 @@ class SocialCubit extends Cubit<SocialStates> {
           .update({
         'following': FieldValue.arrayRemove([followerModel.toMap()]),
       }).then((value) {
-        userModel!.following.removeWhere((element) => element.uId == followerModel.uId);
+        userModel!.following!
+            .removeWhere((element) => element.uId == followerModel.uId);
       }).catchError((error) {
         print(error.toString());
         emit(SocialUnFollowErrorState(error.toString()));
@@ -471,7 +487,7 @@ class SocialCubit extends Cubit<SocialStates> {
           .update({
         'followers': FieldValue.arrayRemove([myFollowModel.toMap()]),
       }).then((value) {
-        otherUserModel!.followers
+        otherUserModel!.followers!
             .removeWhere((element) => element.uId == myFollowModel.uId);
         emit(SocialUnFollowSuccessState());
       }).catchError((error) {
@@ -482,14 +498,12 @@ class SocialCubit extends Cubit<SocialStates> {
   }
 
   signOut() async {
-    try{
+    try {
       await FirebaseAuth.instance.signOut();
       emit(SocialSignOutSuccessState());
-    }catch (e){
+    } catch (e) {
       print(e);
       emit(SocialSignOutSuccessState());
     }
-
-
   }
 }

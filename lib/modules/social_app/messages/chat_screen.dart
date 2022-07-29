@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../constants/components/components.dart';
+import '../../../constants/constants.dart';
 import '../../../cubits/cubit/cubit.dart';
 import '../../../cubits/cubit/states.dart';
 import '../../../models/register_model.dart';
+import '../../../styles/adaptive/adaptivw_indicator.dart';
 import '../../../styles/colors.dart';
 import 'chat_details.dart';
 
@@ -75,7 +77,9 @@ class ChatScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            ):const Center(child: CircularProgressIndicator()),
+            ): Center(child: AdaptiveIndicator(
+              os: getOS(),
+            ),),
           ),
         );
       },

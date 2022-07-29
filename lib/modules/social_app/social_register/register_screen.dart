@@ -4,6 +4,7 @@ import '../../../constants/components/components.dart';
 import '../../../constants/constants.dart';
 import '../../../Home/home_screen.dart';
 import '../../../network/local/cache_helper.dart';
+import '../../../styles/adaptive/adaptivw_indicator.dart';
 import '../../../styles/colors.dart';
 import 'register_cubit/cubit.dart';
 import 'register_cubit/states.dart';
@@ -171,7 +172,9 @@ class SocialRegisterScreen extends StatelessWidget {
                                 },
                                 text: 'Sign Up',
                               )
-                            : const CircularProgressIndicator(),
+                            : AdaptiveIndicator(
+                          os: getOS(),
+                        ),
                       ),
                       const SizedBox(
                         height: 20,

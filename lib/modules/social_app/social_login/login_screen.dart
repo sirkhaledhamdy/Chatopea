@@ -6,6 +6,7 @@ import '../../../constants/constants.dart';
 import '../../../cubits/cubit/cubit.dart';
 import '../../../Home/home_screen.dart';
 import '../../../network/local/cache_helper.dart';
+import '../../../styles/adaptive/adaptivw_indicator.dart';
 import '../../../styles/colors.dart';
 import '../social_register/register_screen.dart';
 import 'cubit/cubit.dart';
@@ -153,7 +154,9 @@ class SocialLoginScreen extends StatelessWidget {
                       },
                       text: 'Sign In',
                     )
-                        : const CircularProgressIndicator(),
+                        :  AdaptiveIndicator(
+                      os: getOS(),
+                    ),
                   ),
                       const SizedBox(
                         height: 20,

@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../constants/components/components.dart';
+import '../../../constants/constants.dart';
 import '../../../cubits/cubit/cubit.dart';
 import '../../../cubits/cubit/states.dart';
 import '../../../models/message_model.dart';
 import '../../../models/register_model.dart';
+import '../../../styles/adaptive/adaptivw_indicator.dart';
 import '../../../styles/colors.dart';
 import '../other_profile/other_profile_screen.dart';
 
@@ -36,7 +38,7 @@ class ChatDetailsScreen extends StatelessWidget {
                   titleSpacing: 0.0,
                   title: GestureDetector(
                     onTap: (){
-                      navigateTo(context, OtherProfileScreen(uId: userModel!.uId,));
+                      navigateTo(context, OtherProfileScreen(uId: userModel!.uId!,));
                     },
                     child: Row(
                       children: [
@@ -67,7 +69,9 @@ class ChatDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 body: (SocialCubit.get(context).loadingMessages == true)
-                    ? const Center(child: CircularProgressIndicator())
+                    ?  Center(child: AdaptiveIndicator(
+                  os: getOS(),
+                ),)
                     : Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Column(
@@ -181,23 +185,26 @@ class ChatDetailsScreen extends StatelessWidget {
 
   Widget buildMyMessage(SocialMessageModel messageModel) => Align(
         alignment: AlignmentDirectional.centerEnd,
-        child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 5,
-              horizontal: 10,
-            ),
-            decoration: BoxDecoration(
-              color: defaultColor.withOpacity(.2),
-              borderRadius: const BorderRadiusDirectional.only(
-                topStart: Radius.circular(20),
-                topEnd: Radius.circular(20),
-                bottomStart: Radius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 5,
+                horizontal: 10,
               ),
-            ),
-            child: Text(
-              '${messageModel.text}',
-              style: const TextStyle(),
-            )),
+              decoration: BoxDecoration(
+                color: defaultColor.withOpacity(.2),
+                borderRadius: const BorderRadiusDirectional.only(
+                  topStart: Radius.circular(20),
+                  topEnd: Radius.circular(20),
+                  bottomStart: Radius.circular(20),
+                ),
+              ),
+              child: Text(
+                '${messageModel.text}',
+                style: const TextStyle(),
+              )),
+        ),
       );
   Widget buildHiMessage(SocialMessageModel messageModel) => Align(
         alignment: AlignmentDirectional.centerStart,

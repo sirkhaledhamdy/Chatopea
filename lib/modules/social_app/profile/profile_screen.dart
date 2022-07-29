@@ -55,14 +55,18 @@ class SocialProfileScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${userModel.name}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 24,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '${userModel.name}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 24,
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 4,
@@ -120,7 +124,7 @@ class SocialProfileScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              '${userModel.followers.length}',
+                              '${userModel.followers!.length}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -140,7 +144,7 @@ class SocialProfileScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              '${userModel.following.length}',
+                              '${userModel.following!.length}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -278,9 +282,6 @@ Widget bulidPostItem(SocialPostModel model , context , index , commentController
         crossAxisAlignment:CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: (){
-              navigateTo(context, OtherProfileScreen(uId: model.uId,));
-            },
             child: Row(
               children: [
                 CircleAvatar(
@@ -494,7 +495,7 @@ Widget bulidPostItem(SocialPostModel model , context , index , commentController
                     Flexible(
                       child: TextField(
                         textInputAction: TextInputAction.done,
-                        onSubmitted: (String){
+                        onSubmitted: (_){
                           SocialCubit.get(context).commentPost(
                             SocialCubit.get(context).postId[index],
                             model,
@@ -535,6 +536,7 @@ Widget bulidPostItem(SocialPostModel model , context , index , commentController
                     ),
                     TextButton(
                       onPressed: (){
+                        print("write a comment >>>>");
                         SocialCubit.get(context).commentPost(
                           SocialCubit.get(context).postId[index],
                           model,

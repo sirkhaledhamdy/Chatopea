@@ -10,6 +10,7 @@ import '../../../cubits/cubit/states.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../models/comment_model.dart';
 import '../../../models/post_model.dart';
+import '../../../styles/adaptive/adaptivw_indicator.dart';
 import '../../../styles/colors.dart';
 import '../other_profile/other_profile_screen.dart';
 import '../post/new_post.dart';
@@ -21,8 +22,12 @@ class SocialFeedsScreen extends StatelessWidget {
   void clearText() {
     commentController.clear();
   }
-  var commentController = TextEditingController();
+
+  List<TextEditingController> commentController =  <TextEditingController>[];
+
+  // var commentController = TextEditingController();
   DateTime nowTime = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SocialCubit, SocialStates>(
@@ -31,7 +36,7 @@ class SocialFeedsScreen extends StatelessWidget {
       builder: (context, state) {
 
         return
-          SocialCubit.get(context).posts.isNotEmpty
+          SocialCubit.get(context).posts.isNotEmpty && SocialCubit.get(context).userModel!=null
 
               ? RefreshIndicator(
             onRefresh: ()async{
@@ -88,8 +93,10 @@ class SocialFeedsScreen extends StatelessWidget {
                         CachedNetworkImage(
                           imageUrl:
                           "https://img.freepik.com/free-photo/metaverse-concept-collage-design_23-2149419859.jpg",
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(),
+                          placeholder: (context, url) =>  Center(
+                            child: AdaptiveIndicator(
+                              os: getOS(),
+                            ),
                           ),
                           errorWidget: (context, url, error) =>
                               const Icon(Icons.error),
@@ -112,8 +119,17 @@ class SocialFeedsScreen extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) => bulidPostItem(SocialCubit.get(context).posts[index] , context, index , commentController,nowTime , clearText ),
+                    itemBuilder: (context, index)
+                    {
+                      commentController.add( TextEditingController());
+
+                      return
+                      bulidPostItem(SocialCubit
+                        .get(context)
+                        .posts[index], context, index, commentController[index],
+                        nowTime, clearText);},
                     itemCount: SocialCubit.get(context).posts.length,
+
                   ),
                   const SizedBox(
                     height: 20,
@@ -122,15 +138,20 @@ class SocialFeedsScreen extends StatelessWidget {
               ),
             ),
           )
-              : const Center(
-            child: CircularProgressIndicator(),
+              :  Center(
+            child: AdaptiveIndicator(
+              os: getOS(),
+            ),
           );
       },
     );
   }
 }
 
-Widget bulidPostItem(SocialPostModel model , context , index , commentController ,nowTime , clearText ) => Card(
+Widget bulidPostItem(SocialPostModel model , context , index , commentController ,nowTime , clearText )
+{
+  print(model.uId);
+  return Card(
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(15.0),
   ),
@@ -144,7 +165,7 @@ Widget bulidPostItem(SocialPostModel model , context , index , commentController
       children: [
         GestureDetector(
           onTap: (){
-            navigateTo(context, OtherProfileScreen(uId: model.uId,));
+            navigateTo(context, OtherProfileScreen(uId: model.uId!,));
           },
           child: Row(
             children: [
@@ -448,7 +469,7 @@ Widget bulidPostItem(SocialPostModel model , context , index , commentController
       ],
     ),
   ),
-);
+);}
 
 Widget buildCommentItem({ SocialCommentModel? model , context ,  index }) => Card(
   shape: RoundedRectangleBorder(

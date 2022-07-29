@@ -10,10 +10,10 @@ class SocialUserModel
   dynamic title;
   dynamic bio;
   bool? isEmailVerified;
-  List<SocialFollowModel> followers = [];
-  List<SocialFollowModel> following = [];
+  List<SocialFollowModel>? followers = [];
+  List<SocialFollowModel>? following = [];
 
-  SocialUserModel({this.name, this.email, this.phone ,  this.uId , this.isEmailVerified, this.image, this.bio, this.title , required this.followers , required this.following});
+  SocialUserModel({this.name, this.email, this.phone ,  this.uId , this.isEmailVerified, this.image, this.bio, this.title ,  this.followers ,  this.following});
 
   SocialUserModel.fromJson(Map<String , dynamic>? json)
   {
@@ -26,10 +26,10 @@ class SocialUserModel
     bio = json['bio'];
     title = json['title'];
     json['followers'].forEach((element){
-      followers.add(SocialFollowModel.fromJson(element,),);
+      followers!.add(SocialFollowModel.fromJson(element,),);
     });
       json['following'].forEach((element){
-        following.add(SocialFollowModel.fromJson(element,),);
+        following!.add(SocialFollowModel.fromJson(element,),);
       });
 
   }
@@ -44,8 +44,8 @@ class SocialUserModel
       'image':image,
       'bio':bio,
       'title':title,
-      'followers':followers,
-      'following':following
+      'following':List<dynamic>.from(following!.map((x)=>x.toMap())),
+      'followers':List<dynamic>.from(followers!.map((x)=>x.toMap())),
 
 
 
